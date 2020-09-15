@@ -435,6 +435,14 @@ module ActionDispatch
       "#<#{self.class.name} #{method} #{original_url.dump} for #{remote_ip}>"
     end
 
+    def origin_host
+      get_header("HTTP_HOST").to_s.sub(/:\d+\z/, "")
+    end
+
+    def forwarded_host
+      x_forwarded_host.to_s.split(/,\s?/).last.to_s.sub(/:\d+\z/, "")
+    end
+
     private
       def check_method(name)
         HTTP_METHOD_LOOKUP[name] || raise(ActionController::UnknownHttpMethod, "#{name}, accepted HTTP methods are #{HTTP_METHODS[0...-1].join(', ')}, and #{HTTP_METHODS[-1]}")

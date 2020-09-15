@@ -1,0 +1,7 @@
+Blocked hosts: <%= @hosts.join(', ') %>
+
+To allow requests to <%= @hosts.join(', ') %>, add the following to your environment configuration:
+
+<% @hosts.each do |host| %>
+  config.hosts << "<%= host %>"
+<% end %>

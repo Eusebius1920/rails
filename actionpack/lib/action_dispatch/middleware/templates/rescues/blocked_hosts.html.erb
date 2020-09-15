@@ -1,0 +1,11 @@
+<header>
+  <h1>Blocked hosts: <%= @hosts.join(', ') %></h1>
+</header>
+<div id="container">
+  <h2>To allow requests to <%= @hosts.join(', ') %>, add the following to your environment configuration:</h2>
+  <pre>
+  <% @hosts.each do |host| %>
+config.hosts &lt;&lt; "<%= host %>"
+  <% end %>
+  </pre>
+</div>

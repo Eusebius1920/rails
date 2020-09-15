@@ -57,8 +57,13 @@ module ActionDispatch
       request = Request.new(env)
 
       format = request.xhr? ? "text/plain" : "text/html"
-      template = DebugView.new(host: request.host)
-      body = template.render(template: "rescues/blocked_host", layout: "rescues/layout")
+      template = DebugView.new(
+        hosts: [
+          request.origin_host,
+          request.forwarded_host,
+        ].compact.uniq
+      )
+      body = template.render(template: "rescues/blocked_hosts", layout: "rescues/layout")
 
       [403, {
         "Content-Type" => "#{format}; charset=#{Response.default_charset}",
@@ -87,8 +92,8 @@ module ActionDispatch
 
     private
       def authorized?(request)
-        origin_host = request.get_header("HTTP_HOST").to_s.sub(/:\d+\z/, "")
-        forwarded_host = request.x_forwarded_host.to_s.split(/,\s?/).last.to_s.sub(/:\d+\z/, "")
+        origin_host = request.origin_host
+        forwarded_host = request.forwarded_host
 
         @permissions.allows?(origin_host) &&
           (forwarded_host.blank? || @permissions.allows?(forwarded_host))
